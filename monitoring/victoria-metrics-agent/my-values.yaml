@@ -46,7 +46,7 @@ ingress:
       port: http
   
   # -- Array of TLS objects
-  tls: []
+  tls:
     - secretName: "vmagent-tls"
       hosts:
         - vmagent.zgz.local
