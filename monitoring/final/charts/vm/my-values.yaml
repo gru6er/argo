@@ -31,7 +31,7 @@ victoria-metrics-single:
         - secretName: "mon-tls"
           hosts:
             - vm.zgz.local
-      ingressClassName: system-ingress
+      ingressClassName: nginx
     statefulSet:
       enabled: true
       podManagementPolicy: Parallel
