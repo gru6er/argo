@@ -14,6 +14,9 @@ victoriaMetricsAgent:
   # Настройки remoteWrite
   remoteWrite:
     - url: "http://victoriametrics-victoria-metrics-single-server:8428/api/v1/write"
+      # Дополнительные настройки (необязательно):
+      # remoteTimeout: "30s"
+      # writeRelabelConfigs: []
 
   # Настройки сервиса
   service:
