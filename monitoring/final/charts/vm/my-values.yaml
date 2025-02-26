@@ -22,7 +22,7 @@ victoria-metrics-single:
     ingress:
       enabled: true
       annotations:
-        certmanager.io/issuer: monitoring-issuer
+        cert-manager.io/issuer: "monitoring-issuer"
       hosts:
         - name: "vm.zgz.local"
           path: /
