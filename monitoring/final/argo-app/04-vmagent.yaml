@@ -15,77 +15,69 @@ spec:
     chart: victoria-metrics-agent  # Имя Helm-чарта
     helm:
       values: |
-        vmagent:
+        replicaCount: 1
+        # Переопределение имен
+        nameOverride: "vmagent"
+        fullnameOverride: "vmagent"
+
+        # Настройки remoteWrite
+        remoteWrite:
+          - url: "http://victoriametrics-victoria-metrics-single-server:8428/api/v1/write"
+
+        # Настройки сервиса
+        service:
           enabled: true
-          replicaCount: 1
+          port: 8429
+          type: ClusterIP
 
-          image:
-            repository: victoriametrics/vmagent
-            tag: "v1.72.0"
-            pullPolicy: IfNotPresent
+        # Настройки Ingress
+        ingress:
+          enabled: true
+          annotations:
+            cert-manager.io/issuer: "monitoring-issuer"
+          hosts:
+            - host: vmagent.zgz.local
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - secretName: "vmagent-tls"
+              hosts:
+                - vmagent.zgz.local
+          ingressClassName: nginx
 
-          # Переопределение имен
-          nameOverride: "vmagent-sys"
-          fullnameOverride: "vmagent-sys"
+        # Ресурсы
+        resources:
+          requests:
+            cpu: 200m
+            memory: 200Mi
+          limits:
+            cpu: 500m
+            memory: 600Mi
 
-          # Настройки remoteWrite
-          remoteWrite:
-            - url: "http://victoriametrics-victoria-metrics-single-server:8428/api/v1/write"
+        # Настройки Persistent Volume
+        persistence:
+          enabled: true
+          storageClassName: nfs
+          accessModes:
+            - ReadWriteOnce
+          size: 2Gi
 
-          # Настройки сервиса
-          service:
-            enabled: true
-            port: 8429
-            type: ClusterIP
-
-          # Настройки Ingress
-          ingress:
-            enabled: true
-            annotations:
-              cert-manager.io/issuer: "monitoring-issuer"
-            hosts:
-              - host: vmagent.zgz.local
-                paths:
-                  - path: /
-                    pathType: Prefix
-            tls:
-              - secretName: "vmagent-tls"
-                hosts:
-                  - vmagent.zgz.local
-            ingressClassName: nginx
-
-          # Ресурсы
-          resources:
-            requests:
-              cpu: 200m
-              memory: 200Mi
-            limits:
-              cpu: 500m
-              memory: 600Mi
-
-          # Настройки Persistent Volume
-          persistence:
-            enabled: true
-            storageClassName: nfs
-            accessModes:
-              - ReadWriteOnce
-            size: 2Gi
-
-          # Конфигурация scrape
-          config:
-            global:
-              scrape_interval: 10s
-            scrape_configs:
-              - job_name: "node-exporter"
-                kubernetes_sd_configs:
-                  - role: endpoints
-                relabel_configs:
-                  - source_labels: [__meta_kubernetes_endpoints_name]
-                    regex: "nexporter-prometheus-node-exporter"
-                    action: keep
-              - job_name: "kube-state-metrics"
-                static_configs:
-                  - targets: ["ksm-kube-state-metrics.monitoring.svc.cluster.local:8080"]
+        # Конфигурация scrape
+        config:
+          global:
+            scrape_interval: 30s
+          scrape_configs:
+            - job_name: "node-exporter"
+              kubernetes_sd_configs:
+                - role: endpoints
+              relabel_configs:
+                - source_labels: [__meta_kubernetes_endpoints_name]
+                  regex: "nexporter-prometheus-node-exporter"
+                  action: keep
+            - job_name: "kube-state-metrics"
+              static_configs:
+                - targets: ["ksm-kube-state-metrics.monitoring.svc.cluster.local:8080"]
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring  # Namespace, куда будет развернут vmagent
