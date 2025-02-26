@@ -2,20 +2,20 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: grafana
-  namespace: argocd
   labels:
     app: monitoring
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
     name: ''
     namespace: monitoring
     server: 'https://kubernetes.default.svc'
   source:
-    path: monitoring/final/manifests/grafana
+    path: monitoring/final/charts/grafana
     repoURL: 'https://github.com/gru6er/argo'
     targetRevision: main
+    helm:
+      valueFiles:
+        - my-values.yaml
   project:  monitoring
   syncPolicy:
     automated:
