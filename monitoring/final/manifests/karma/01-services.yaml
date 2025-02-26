@@ -19,15 +19,15 @@ kind: Ingress
 metadata:
   name: karma
   annotations:
-    certmanager.k8s.io/cluster-issuer: monitoring-issuer
+    cert-manager.io/issuer: "monitoring-issuer"
 spec:
   ingressClassName: nginx
   tls:
   - secretName: karma-tls
     hosts:
-      - karma.kryukov.local
+      - karma.zgz.local
   rules:
-    - host: "karma.kryukov.local"
+    - host: "karma.zgz.local"
       http:
         paths:
           - path: /

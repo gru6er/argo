@@ -24,7 +24,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: vmalert.kryukov.local
+    - host: vmalert.zgz.local
       http:
         paths:
           - path: /
@@ -36,5 +36,5 @@ spec:
                   number: 8880
   tls:
     - hosts:
-        - vmalert.kryukov.local
+        - vmalert.zgz.local
       secretName: vmalert-tls
