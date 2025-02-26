@@ -1,44 +1,41 @@
 ingress:
   enabled: true
-  ingressClassName: nginx
   annotations:
     cert-manager.io/issuer: "monitoring-issuer"
+    kubernetes.io/ingress.class: nginx
   hosts:
     - host: grafana.zgz.local
-      paths:
-      - path: /
-        pathType: Prefix
+  path: /
+  pathType: Prefix
   tls:
     - hosts:
       - grafana.zgz.local
       secretName: grafana-tls
 
-grafana:
-  revisionHistoryLimit: 3
-  testFramework:
-    enabled: false
-  ingress:
-    enabled: false
-  resources:
-    limits:
-      cpu: 500m
-      memory: 1024Mi
-    requests:
-      cpu: 100m
-      memory: 128Mi
-  persistence:
-    type: pvc
-    enabled: true
-    storageClassName: managed-nfs-storage
-    accessModes:
-      - ReadWriteOnce
-    size: 2Gi
-  datasources:
-    datasources.yaml:
-      apiVersion: 1
-      datasources:
-      - name: Victoria
-        type: prometheus
-        url: http://victoriametrics-victoria-metrics-single-server:8428
-        access: proxy
-        isDefault: true
+
+revisionHistoryLimit: 3
+testFramework:
+  enabled: false
+resources:
+  limits:
+    cpu: 500m
+    memory: 1024Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+persistence:
+  type: pvc
+  enabled: true
+  storageClassName: nfs
+  accessModes:
+    - ReadWriteOnce
+  size: 2Gi
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+    - name: Victoria
+      type: prometheus
+      url: http://victoriametrics-victoria-metrics-single-server:8428
+      access: proxy
+      isDefault: true
