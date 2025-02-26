@@ -19,10 +19,10 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
-    certmanager.k8s.io/issuer: monitoring-issuer
+    cert-manager.io/issuer: "monitoring-issuer"
   name: vmalert
 spec:
-  ingressClassName: system-ingress
+  ingressClassName: nginx
   rules:
     - host: vmalert.kryukov.local
       http:

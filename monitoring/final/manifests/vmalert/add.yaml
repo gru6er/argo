@@ -142,7 +142,7 @@ metadata:
 
   name: vmalert
 spec:
-  ingressClassName: system-ingress
+  ingressClassName: nginx
   rules:
     - host: vmalert.kryukov.local
       http:

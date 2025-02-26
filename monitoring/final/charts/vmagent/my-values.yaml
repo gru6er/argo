@@ -19,7 +19,7 @@ victoria-metrics-agent:
   ingress:
     enabled: true
     annotations:
-      certmanager.k8s.io/issuer: monitoring-issuer
+      cert-manager.io/issuer: "monitoring-issuer"
 
     extraLabels: { }
     hosts:
@@ -31,7 +31,7 @@ victoria-metrics-agent:
         hosts:
           - vmagent.zgz.local
     pathType: Prefix
-    ingressClassName: system-ingress
+    ingressClassName: nginx
 
   resources:
     requests:
