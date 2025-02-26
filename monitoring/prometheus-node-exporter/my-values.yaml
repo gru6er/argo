@@ -84,7 +84,9 @@ prometheus-node-exporter:
   # Expose the service to the host network
   hostNetwork: false
   hostPID: false
-
+  daemonsetAnnotations:
+    - pod-security.kubernetes.io/enforce=privileged
+  
   ## Assign a group of affinity scheduling rules
   ##
   affinity: { }
@@ -98,8 +100,7 @@ prometheus-node-exporter:
   #                 - target-host-name
 
   # Annotations to be added to node exporter pods
-  podAnnotations: 
-    - pod-security.kubernetes.io/enforce: "privileged"
+  podAnnotations: { }
 
   # Extra labels to be added to node exporter pods
   podLabels: { }
