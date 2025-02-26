@@ -26,20 +26,38 @@ service:
 
 # Настройки Ingress
 ingress:
+  # -- Enable deployment of ingress for agent
   enabled: true
-  annotations:
+  
+  # -- Ingress annotations
+  annotations: 
     cert-manager.io/issuer: "monitoring-issuer"
+  #   kubernetes.io/ingress.class: nginx
+  #   kubernetes.io/tls-acme: 'true'
+
+  # -- Ingress extra labels
   extraLabels: {}
+  
+  # -- Array of host objects
   hosts:
-    - host: vmagent.zgz.local
-      paths:
-        - path: /
-          pathType: Prefix
-  tls:
+    - name: vmagent.zgz.local
+      path:
+        - / 
+      port: http
+  
+  # -- Array of TLS objects
+  tls: []
     - secretName: "vmagent-tls"
       hosts:
         - vmagent.zgz.local
-  ingressClassName: nginx
+
+  # -- Ingress controller class name
+  ingressClassName: "nginx"
+
+  # -- Ingress path type
+  pathType: Prefix
+
+
 
 # Ресурсы
 resources:
