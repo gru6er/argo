@@ -13,12 +13,12 @@ spec:
     namespace: monitoring
     server: 'https://kubernetes.default.svc'
   source:
-    path: monitoring/final/charts/nexporter
+    path: monitoring/prometheus-node-exporter
     repoURL: 'https://github.com/gru6er/argo'
     targetRevision: main
     helm:
       valueFiles:
-        - values.yaml
+        - my-values.yaml
   project:  monitoring
   syncPolicy:
     automated:

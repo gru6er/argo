@@ -1,10 +1,28 @@
 apiVersion: v2
-name: nexporter
-description: Install kube-state-metrics to generate and expose cluster-level metrics
+name: prometheus-node-exporter
+description: A Helm chart for prometheus node-exporter
+keywords:
+  - node-exporter
+  - prometheus
+  - exporter
 type: application
-version: 2.5.0
-appVersion: 1.3.1
-dependencies:
-  - name: prometheus-node-exporter
-    version: 2.5.0
-    repository: https://prometheus-community.github.io/helm-charts
+version: 4.44.1
+appVersion: 1.9.0
+home: https://github.com/prometheus/node_exporter/
+sources:
+  - https://github.com/prometheus/node_exporter/
+maintainers:
+  - name: gianrubio
+    email: gianrubio@gmail.com
+    url: https://github.com/gianrubio
+  - name: zanhsieh
+    email: zanhsieh@gmail.com
+    url: https://github.com/zanhsieh
+  - name: zeritti
+    email: rootsandtrees@posteo.de
+    url: https://github.com/zeritti
+annotations:
+  "artifacthub.io/license": Apache-2.0
+  "artifacthub.io/links": |
+    - name: Chart Source
+      url: https://github.com/prometheus-community/helm-charts
