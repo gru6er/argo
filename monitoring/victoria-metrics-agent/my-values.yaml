@@ -1,38 +1,47 @@
-victoria-metrics-agent:
+victoriaMetricsAgent:
   replicaCount: 1
+
+  # Настройки образа
   image:
     repository: victoriametrics/vmagent
     tag: "v1.112.0"
     pullPolicy: IfNotPresent
 
+  # Переопределение имен
   nameOverride: "vmagent-sys"
   fullnameOverride: "vmagent-sys"
 
-  # Это параметр зависит от установки victoriametrics
-  remoteWriteUrls:
-    - http://victoriametrics-victoria-metrics-single-server:8428/api/v1/write
+  # Настройки remoteWrite
+  remoteWrite:
+    - url: "http://victoriametrics-victoria-metrics-single-server:8428/api/v1/write"
+      # Дополнительные настройки (необязательно):
+      # remoteTimeout: "30s"
+      # writeRelabelConfigs: []
 
+  # Настройки сервиса
   service:
     enabled: true
-    servicePort: 8429
+    port: 8429
     type: ClusterIP
+
+  # Настройки Ingress
   ingress:
     enabled: true
     annotations:
       cert-manager.io/issuer: "monitoring-issuer"
-
-    extraLabels: { }
+    extraLabels: {}
     hosts:
-      - name: vmagent.zgz.local
-        path: /
-        port: http
+      - host: vmagent.zgz.local
+        paths:
+          - path: /
+            pathType: Prefix
     tls:
       - secretName: "vmagent-tls"
         hosts:
           - vmagent.zgz.local
-    pathType: Prefix
     ingressClassName: nginx
 
+  # Ресурсы
   resources:
     requests:
       cpu: 200m
@@ -41,6 +50,7 @@ victoria-metrics-agent:
       cpu: 500m
       memory: 600Mi
 
+  # Настройки Persistent Volume
   persistence:
     enabled: true
     storageClassName: nfs
@@ -48,18 +58,20 @@ victoria-metrics-agent:
       - ReadWriteOnce
     size: 2Gi
 
+  # Конфигурация scrape
   config:
     global:
       scrape_interval: 10s
 
+  # Дополнительные конфигурации для скрейпа
   extraScrapeConfigs:
     - job_name: 'node-exporter'
       kubernetes_sd_configs:
         - role: endpoints
       relabel_configs:
-        - source_labels: [ __meta_kubernetes_endpoints_name ]
+        - source_labels: [__meta_kubernetes_endpoints_name]
           regex: 'nexporter-prometheus-node-exporter'
           action: keep
     - job_name: 'kube-state-metrics'
       static_configs:
-        - targets: [ 'ksm-kube-state-metrics.monitoring.svc.cluster.local:8080' ]
+        - targets: ['ksm-kube-state-metrics.monitoring.svc.cluster.local:8080']
