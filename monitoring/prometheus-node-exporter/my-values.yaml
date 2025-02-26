@@ -85,7 +85,7 @@ prometheus-node-exporter:
   hostNetwork: false
   hostPID: false
   daemonsetAnnotations:
-    - pod-security.kubernetes.io/enforce=privileged
+    - "pod-security.kubernetes.io/enforce=privileged"
   
   ## Assign a group of affinity scheduling rules
   ##
