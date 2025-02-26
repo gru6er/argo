@@ -66,6 +66,9 @@ prometheus-node-exporter:
     runAsNonRoot: true
     runAsUser: 65534
 
+  containerSecurityContext:
+    readOnlyRootFilesystem: true
+
   rbac:
     ## If true, create & use RBAC resources
     ##
@@ -79,7 +82,8 @@ prometheus-node-exporter:
   endpoints: [ ]
 
   # Expose the service to the host network
-  hostNetwork: true
+  hostNetwork: false
+  hostPID: false
 
   ## Assign a group of affinity scheduling rules
   ##
@@ -94,7 +98,8 @@ prometheus-node-exporter:
   #                 - target-host-name
 
   # Annotations to be added to node exporter pods
-  podAnnotations: { }
+  podAnnotations: 
+    - pod-security.kubernetes.io/enforce: "privileged"
 
   # Extra labels to be added to node exporter pods
   podLabels: { }
