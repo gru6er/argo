@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana-ingress
+  namespace: monitoring
+  annotations:
+    # Аннотация для указания issuer в cert-manager
+    cert-manager.io/issuer: "monitoring-issuer"
+
+    # Аннотация для указания класса Ingress (Nginx)
+    kubernetes.io/ingress.class: "nginx"
+
+    # Дополнительные аннотации для Nginx (если нужны)
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx # (Опционально, если используется Kubernetes версии >=1.18)
+  rules:
+    - host: grafana.zgz.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana # Укажите имя сервиса Grafana
+                port:
+                  number: 80 # Укажите порт сервиса Grafana
+  tls:
+    - hosts:
+        - grafana.zgz.local
+      secretName: grafana-tls

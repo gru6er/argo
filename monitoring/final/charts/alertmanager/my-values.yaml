@@ -1,0 +1,33 @@
+alertmanager:
+  nameOverride: "alertmanager"
+  fullnameOverride: "alertmanager"
+  ingress:
+    enabled: true
+    className: "nginx"
+    annotations:
+      cert-manager.io/issuer: "monitoring-issuer"
+    hosts:
+      - host: am.zgz.local
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - hosts:
+          - am.zgz.local
+        secretName: am-tls
+  resources:
+    limits:
+      cpu: 100m
+      memory: 256Mi
+    requests:
+      cpu: 10m
+      memory: 32Mi
+  persistence:
+    enabled: true
+    storageClass: "nfs"
+    accessModes:
+      - ReadWriteOnce
+    size: 50Mi
+  config:
+    global:
+      resolve_timeout: 5m
