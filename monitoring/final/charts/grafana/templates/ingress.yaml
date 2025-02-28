@@ -16,15 +16,13 @@ spec:
     - host: {{ .host }}
       http:
         paths:
-{{- range .paths }}
-          - path: {{ . }}
-            pathType: Prefix
+          - path: {{ .path | default "/" }}
+            pathType: {{ .pathType | default "Prefix" }}
             backend:
               service:
                 name: {{ include "grafana.service.name" . }}
                 port:
                   number: {{ .Values.service.port }}
-{{- end }}
 {{- end }}
   tls:
 {{- if .Values.ingress.tls }}
