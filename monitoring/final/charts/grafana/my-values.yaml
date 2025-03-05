@@ -54,12 +54,12 @@ persistence:
   accessModes:
     - ReadWriteOnce
   size: 2Gi
-datasources:
-  datasources.yaml:
-    apiVersion: 1
-    datasources:
-    - name: Victoria
-      type: prometheus
-      url: http://victoriametrics-victoria-metrics-single-server:8428
-      access: proxy
-      isDefault: true
+# datasources:
+#   datasources.yaml:
+#     apiVersion: 1
+#     datasources:
+#     - name: Victoria
+#       type: prometheus
+#       url: http://victoriametrics-victoria-metrics-single-server:8428
+#       access: proxy
+#       isDefault: true
