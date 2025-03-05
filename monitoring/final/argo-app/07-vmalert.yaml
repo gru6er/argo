@@ -13,9 +13,12 @@ spec:
     namespace: monitoring
     server: 'https://kubernetes.default.svc'
   source:
-    path: monitoring/final/manifests/vmalert
+    path: monitoring/final/charts/vmalert
     repoURL: 'https://github.com/gru6er/argo'
     targetRevision: main
+    helm:
+      valueFiles:
+        - my-values.yaml
   project:  monitoring
   syncPolicy:
     automated:
