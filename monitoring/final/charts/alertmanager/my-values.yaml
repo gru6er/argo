@@ -31,3 +31,14 @@ alertmanager:
   config:
     global:
       resolve_timeout: 5m
+    receivers:
+      - name: 'telegram'
+        telegram_configs:
+        - bot_token: '7711735369:AAEWcawN8rV1Py2LkeBqHq091bhpKQyy38c' # Замените your-bot-token на ваш токен бота
+          chat_id: '1348935100'
+    route:
+      group_by: ['...']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 3h
+      receiver: 'telegram'
