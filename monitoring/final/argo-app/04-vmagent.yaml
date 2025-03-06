@@ -13,7 +13,7 @@ spec:
     namespace: monitoring
     server: 'https://kubernetes.default.svc'
   source:
-    path: monitoring/victoria-metrics-agent
+    path: monitoring/final/charts/vmagent
     repoURL: 'https://github.com/gru6er/argo'
     targetRevision: main
     helm:

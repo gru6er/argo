@@ -93,3 +93,24 @@ extraScrapeConfigs:
   - job_name: 'kube-state-metrics'
     static_configs:
       - targets: ['ksm-kube-state-metrics.monitoring.svc.cluster.local:8080']
+  - job_name: 'nginx-ingress'
+    kubernetes_sd_configs:
+      - role: endpoints
+        namespaces:
+          names:
+            - default # namespace where your ingress is deployed
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_service_label_app]
+        action: keep
+        regex: nginx-ingress
+      - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_scrape]
+        action: replace
+        regex: (.+);true
+        replacement: ${1}:10254
+        target_label: __address__
+      - source_labels: [__meta_kubernetes_namespace]
+        action: replace
+        target_label: kubernetes_namespace
+      - source_labels: [__meta_kubernetes_service_name]
+        action: replace
+        target_label: kubernetes_name
