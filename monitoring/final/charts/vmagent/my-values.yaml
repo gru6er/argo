@@ -1,65 +1,95 @@
-victoria-metrics-agent:
-  replicaCount: 1
-  image:
-    repository: victoriametrics/vmagent
-    tag: "v1.72.0"
-    pullPolicy: IfNotPresent
 
-  nameOverride: "vmagent-sys"
-  fullnameOverride: "vmagent-sys"
+replicaCount: 1
 
-  # Это параметр зависит от установки victoriametrics
-  remoteWriteUrls:
-    - http://victoriametrics-victoria-metrics-single-server:8428/api/v1/write
+# Настройки образа
+image:
+  repository: victoriametrics/vmagent
+  tag: "v1.112.0"
+  pullPolicy: IfNotPresent
 
-  service:
-    enabled: true
-    servicePort: 8429
-    type: ClusterIP
-  ingress:
-    enabled: true
-    annotations:
-      certmanager.k8s.io/cluster-issuer: monitoring-issuer
+# Переопределение имен
+nameOverride: "vmagent-sys"
+fullnameOverride: "vmagent-sys"
 
-    extraLabels: { }
-    hosts:
-      - name: vmagent.kryukov.local
-        path: /
-        port: http
-    tls:
-      - secretName: "vmagent-tls"
-        hosts:
-          - vmagent.kryukov.local
-    pathType: Prefix
-    ingressClassName: system-ingress
+# Настройки remoteWrite
+remoteWrite:
+  - url: "http://victoriametrics-victoria-metrics-single-server:8428/api/v1/write"
+    # Дополнительные настройки (необязательно):
+    # remoteTimeout: "30s"
+    # writeRelabelConfigs: []
 
-  resources:
-    requests:
-      cpu: 200m
-      memory: 200Mi
-    limits:
-      cpu: 500m
-      memory: 600Mi
+# Настройки сервиса
+service:
+  enabled: true
+  port: 8429
+  type: ClusterIP
 
-  persistence:
-    enabled: true
-    storageClassName: managed-nfs-storage
-    accessModes:
-      - ReadWriteOnce
-    size: 2Gi
+# Настройки Ingress
+ingress:
+  # -- Enable deployment of ingress for agent
+  enabled: true
+  
+  # -- Ingress annotations
+  annotations: 
+    cert-manager.io/issuer: "monitoring-issuer"
+  #   kubernetes.io/ingress.class: nginx
+  #   kubernetes.io/tls-acme: 'true'
 
-  config:
-    global:
-      scrape_interval: 10s
+  # -- Ingress extra labels
+  extraLabels: {}
+  
+  # -- Array of host objects
+  hosts:
+    - name: vmagent.zgz.local
+      path:
+        - / 
+      port: http
+  
+  # -- Array of TLS objects
+  tls:
+    - secretName: "vmagent-tls"
+      hosts:
+        - vmagent.zgz.local
 
-  extraScrapeConfigs:
-    - job_name: 'node-exporter'
-      kubernetes_sd_configs:
-        - role: endpoints
-      relabel_configs:
-        - source_labels: [ __meta_kubernetes_endpoints_name ]
-          regex: 'nexporter-prometheus-node-exporter'
-          action: keep
-    - job_name: 'kube-state-metrics'
-      static_configs:
-        - targets: [ 'ksm-kube-state-metrics.monitoring.svc.cluster.local:8080' ]
+  # -- Ingress controller class name
+  ingressClassName: "nginx"
+
+  # -- Ingress path type
+  pathType: Prefix
+
+
+
+# Ресурсы
+resources:
+  requests:
+    cpu: 200m
+    memory: 200Mi
+  limits:
+    cpu: 500m
+    memory: 600Mi
+
+# Настройки Persistent Volume
+persistence:
+  enabled: true
+  storageClassName: nfs
+  accessModes:
+    - ReadWriteOnce
+  size: 2Gi
+
+# Конфигурация scrape
+config:
+  global:
+    scrape_interval: 10s
+
+# Дополнительные конфигурации для скрейпа
+extraScrapeConfigs:
+  - job_name: 'node-exporter'
+    kubernetes_sd_configs:
+      - role: endpoints
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_endpoints_name]
+        regex: 'nexporter-prometheus-node-exporter'
+        action: keep
+  - job_name: 'kube-state-metrics'
+    static_configs:
+      - targets: ['ksm-kube-state-metrics.monitoring.svc.cluster.local:8080']
